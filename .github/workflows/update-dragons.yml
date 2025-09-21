@@ -3,7 +3,7 @@ name: Update Dragons Sheet
 on:
   workflow_dispatch:
   schedule:
-    - cron: '5 6 * * *'
+    - cron: '0 15 * * *'
 
 permissions:
   contents: read
@@ -11,8 +11,6 @@ permissions:
 jobs:
   update-sheet:
     runs-on: ubuntu-latest
-    env:
-      GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/gcp-sa.json
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -31,8 +29,9 @@ jobs:
         env:
           GCP_SA_JSON: ${{ secrets.GCP_SA_JSON }}
         run: |
-          printf '%s' "$GCP_SA_JSON" > "$GOOGLE_APPLICATION_CREDENTIALS"
-          test -s "$GOOGLE_APPLICATION_CREDENTIALS"
+          printf '%s' "$GCP_SA_JSON" > "$RUNNER_TEMP/gcp-sa.json"
+          test -s "$RUNNER_TEMP/gcp-sa.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/gcp-sa.json" >> "$GITHUB_ENV"
 
       - name: Run updater
         run: |
