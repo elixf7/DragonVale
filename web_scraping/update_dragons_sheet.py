@@ -10,13 +10,15 @@ DATA_URL = "https://dvbox2cdn.bin.sh/data/dragons.json"   # your JSON feed
 IMAGE_BASE = "https://dvboxcdn.com/dragons/"              # images live here
 SHEET_ID = "1yMMElzkBzoSJbrtoC7X64deGlpYiwrcYiwoisl1bEyg"                   # required
 SHEET_TAB = "Dragons"       # tab name
-SA_PATH = "/Users/elifried/.config/gcp/dragonvale-472818-bb88b07b885f.json" # path to service account json
+# Service account JSON path: prefer env var set by CI, fallback to local default
+SA_PATH = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", 
+                         "/Users/elifried/.config/gcp/dragonvale-472818-bb88b07b885f.json")
 
 if not SHEET_ID:
-    sys.exit("SHEET_ID env var is required.")
+    sys.exit("SHEET_ID is required.")
 
 if not SA_PATH or not os.path.exists(SA_PATH):
-    sys.exit("GOOGLE_APPLICATION_CREDENTIALS must point to a valid service account JSON file.")
+    sys.exit("Service account JSON not found. Set GOOGLE_APPLICATION_CREDENTIALS to a valid file path or place the JSON at the default local path.")
 
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets",
           "https://www.googleapis.com/auth/drive"]
